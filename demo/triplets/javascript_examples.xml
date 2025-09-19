@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<prReviewTriplets>
+    <triplet>
+        <title>Use async/await instead of callbacks</title>
+        <before>function fetchUserData(userId, callback) {
+    api.get(`/users/${userId}`, (error, response) => {
+        if (error) {
+            callback(error, null);
+        } else {
+            callback(null, response.data);
+        }
+    });
+}</before>
+        <comment>Consider using async/await pattern for better error handling and readability</comment>
+        <after>async function fetchUserData(userId) {
+    try {
+        const response = await api.get(`/users/${userId}`);
+        return response.data;
+    } catch (error) {
+        throw new Error(`Failed to fetch user data: ${error.message}`);
+    }
+}</after>
+        <repo>webapp/user-service</repo>
+        <filePath>src/api/users.js</filePath>
+        <commenter>js-expert</commenter>
+    </triplet>
+    <triplet>
+        <title>Add input validation</title>
+        <before>function createUser(userData) {
+    return db.users.create(userData);
+}</before>
+        <comment>Missing input validation - should validate required fields and data types</comment>
+        <after>function createUser(userData) {
+    if (!userData || typeof userData !== 'object') {
+        throw new Error('Invalid user data provided');
+    }
+    
+    const { name, email } = userData;
+    if (!name || !email) {
+        throw new Error('Name and email are required fields');
+    }
+    
+    if (!isValidEmail(email)) {
+        throw new Error('Invalid email format');
+    }
+    
+    return db.users.create(userData);
+}</after>
+        <repo>webapp/user-service</repo>
+        <filePath>src/services/userService.js</filePath>
+        <commenter>security-reviewer</commenter>
+    </triplet>
+</prReviewTriplets>

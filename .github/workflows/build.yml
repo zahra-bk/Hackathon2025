@@ -1,0 +1,43 @@
+name: Build PR Review Assistant
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Test basic functionality
+      run: |
+        cd $GITHUB_WORKSPACE
+        # Test loading sample data
+        python -c "from pr_reviewer.loader import load_from_dir; triplets = load_from_dir('demo/triplets'); print(f'Loaded {len(triplets)} triplets')"
+        
+        # Test CLI with sample input
+        python cli.py --triplets-dir demo/triplets --input-file demo/sample_input.py --out demo_output.md
+        
+        # Verify output files were created
+        ls -la demo_output.*
+        
+    - name: Build ZIP artifact
+      run: |
+        python scripts/build_zip.py
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: pr-review-assistant
+        path: dist/pr_reviewer.zip
+        retention-days: 30

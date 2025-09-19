@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<prReviewTriplets>
+    <triplet>
+        <title>Add error handling to file operations</title>
+        <before>def read_config(filename):
+    with open(filename, 'r') as f:
+        return json.load(f)</before>
+        <comment>Consider adding error handling for file not found and JSON parsing errors</comment>
+        <after>def read_config(filename):
+    try:
+        with open(filename, 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        logger.error(f"Config file {filename} not found")
+        return {}
+    except json.JSONDecodeError as e:
+        logger.error(f"Invalid JSON in {filename}: {e}")
+        return {}</after>
+        <repo>example/config-reader</repo>
+        <filePath>src/config.py</filePath>
+        <commenter>senior-dev</commenter>
+    </triplet>
+    <triplet>
+        <title>Use list comprehension for better performance</title>
+        <before>result = []
+for item in items:
+    if item.status == 'active':
+        result.append(item.name)</before>
+        <comment>This can be simplified using a list comprehension for better readability and performance</comment>
+        <after>result = [item.name for item in items if item.status == 'active']</after>
+        <repo>example/data-processor</repo>
+        <filePath>src/processor.py</filePath>
+        <commenter>code-reviewer</commenter>
+    </triplet>
+    <triplet>
+        <title>Add type hints for better code documentation</title>
+        <before>def calculate_total(prices, tax_rate):
+    return sum(prices) * (1 + tax_rate)</before>
+        <comment>Please add type hints to improve code documentation and enable better IDE support</comment>
+        <after>def calculate_total(prices: List[float], tax_rate: float) -> float:
+    return sum(prices) * (1 + tax_rate)</after>
+        <repo>example/calculator</repo>
+        <filePath>src/math_utils.py</filePath>
+        <commenter>type-checker</commenter>
+    </triplet>
+</prReviewTriplets>
