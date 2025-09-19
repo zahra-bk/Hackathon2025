@@ -22,7 +22,7 @@ ip nat inside source list 1 interface GigabitEthernet0/1 overload
 access-list 1 permit 192.168.1.0 0.0.0.255
 # Firewall Rules - BEFORE
 ip access-list extended FIREWALL_IN
- permit tcp any any eq 80
+ permit tcp 10.0.0.0 0.255.255.255 any eq 80
  permit tcp any any eq 443
  permit tcp any any eq 22
  deny ip any any
