@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<network_review_triplet>
+    <description>
+        PR Review Triplet for networking configuration: router ports, NAT, and firewall settings
+    </description>
+
+    <before_config>
+        <![CDATA[
+# Router Port Configuration - BEFORE
+interface GigabitEthernet0/1
+ description WAN_INTERFACE
+ ip address dhcp
+ ip nat outside
+ no shutdown
+interface GigabitEthernet0/2
+ description LAN_INTERFACE
+ ip address 192.168.1.1 255.255.255.0
+ ip nat inside
+ no shutdown
+# NAT Configuration - BEFORE
+ip nat inside source list 1 interface GigabitEthernet0/1 overload
+access-list 1 permit 192.168.1.0 0.0.0.255
+# Firewall Rules - BEFORE
+ip access-list extended FIREWALL_IN
+ permit tcp any any eq 80
+ permit tcp any any eq 443
+ permit tcp any any eq 22
+ deny ip any any
+        ]]>
+    </before_config>
+
+    <review_comment>
+        <![CDATA[
+The current networking configuration has several security vulnerabilities:
+1. SSH (port 22) is open to any source, which is a security risk
+2. The firewall rules are too permissive - allowing HTTP/HTTPS from any source
+3. Missing proper logging for denied connections
+4. No rate limiting on SSH connections
+5. Should add specific rules for internal network management
+Recommendations:
+- Restrict SSH access to specific management networks only
+- Add logging for security analysis
+- Implement rate limiting for connection attempts
+- Add explicit rules for internal network traffic
+        ]]>
+    </review_comment>
+
+    <after_config>
+        <![CDATA[
+# Router Port Configuration - AFTER
+interface GigabitEthernet0/1
+ description WAN_INTERFACE
+ ip address dhcp
+ ip nat outside
+ ip access-group FIREWALL_IN in
+ no shutdown
+interface GigabitEthernet0/2
+ description LAN_INTERFACE
+ ip address 192.168.1.1 255.255.255.0
+ ip nat inside
+ no shutdown
+# NAT Configuration - AFTER (unchanged)
+ip nat inside source list 1 interface GigabitEthernet0/1 overload
+access-list 1 permit 192.168.1.0 0.0.0.255
+# Firewall Rules - AFTER (improved security)
+ip access-list extended FIREWALL_IN
+ # Allow HTTP/HTTPS from trusted networks only
+ permit tcp 10.0.0.0 0.255.255.255 any eq 80
+ permit tcp 10.0.0.0 0.255.255.255 any eq 443
+ permit tcp 192.168.0.0 0.0.255.255 any eq 80
+ permit tcp 192.168.0.0 0.0.255.255 any eq 443
+ 
+ # Restrict SSH to management network only
+ permit tcp 10.1.1.0 0.0.0.255 any eq 22
+ 
+ # Allow internal network communication
+ permit ip 192.168.1.0 0.0.0.255 192.168.1.0 0.0.0.255
+ 
+ # Log and deny all other traffic
+ deny ip any any log
+ 
+# Enable logging for security analysis
+logging buffered 64000
+logging console warnings
+service timestamps log datetime msec
+        ]]>
+    </after_config>
+
+    <metadata>
+        <created_date>2025-01-01</created_date>
+        <focus_area>networking</focus_area>
+        <technologies>
+            <technology>cisco_ios</technology>
+            <technology>router_configuration</technology>
+            <technology>nat</technology>
+            <technology>firewall</technology>
+            <technology>access_control_lists</technology>
+        </technologies>
+        <review_type>security_improvement</review_type>
+    </metadata>
+</network_review_triplet>
