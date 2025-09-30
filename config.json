@@ -1,0 +1,33 @@
+{
+  "repo": "zahra-bk/Hackathon2025",
+  "comment": 2361612782,
+  "second_commit": "4e3c9827fc058c3a7eb143b1700e427333bd19fd",
+
+  "verbosity": 2,
+
+  "use_embeddings": true,
+  "embed_model_name": "sentence-transformers/all-MiniLM-L6-v2",
+
+  "locality_weight": 0.40,
+  "semantic_weight": 0.60,
+
+  "proximity_full_radius": 8,
+  "proximity_zero_radius": 400,
+
+  "combined_pass_threshold": 0.53,
+  "combined_unclear_threshold": 0.50,
+
+  "success_verdicts": ["addressed"],
+
+  "use_intent_semantics": true,
+  "intent_weights": {
+    "intent": 0.55,
+    "undesired": 0.30,
+    "specificity": 0.15
+  },
+  "lambda_remove_weight": 0.5,
+  "descriptor_enabled": true,
+  "descriptor_mode": "acl",
+  "hybrid_lexical_weight": 0.15,
+  "model_style": "default"
+}

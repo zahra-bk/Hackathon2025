@@ -1,0 +1,25 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Eval single comment (evaluation_algorithm.py)",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/evaluation_algorithm.py",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/.env",
+      "justMyCode": true
+    },
+    {
+      "name": "Build dataset for PR (training_data_builder.py)",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/training_data_builder.py",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/.env",
+      "justMyCode": true
+    }
+  ]
+}
